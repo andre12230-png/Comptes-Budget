@@ -24,7 +24,7 @@ def _tx(**kw):
 def db(tmp_path):
     d = Database(str(tmp_path / "s.db"))
     d.insert_tx(_tx(id="a", libelle="ETOILE DU RHONE", libelle_op="ETOILE DU RHONE",
-                    montant=-331.18))
+                    montant=-300.50))
     d.insert_tx(_tx(id="b", libelle="CAFE", libelle_op="CAFE", montant=-2.5))
     return d
 
@@ -33,7 +33,7 @@ def test_recherche_globale_trouve_les_montants(qapp, db):
     from comptesbudget.ui.search import GlobalSearchDialog
     dlg = GlobalSearchDialog(None, db)
     # Virgule, point, et surtout la forme affichée à l'écran (signe + €).
-    for saisie in ("331,18", "331.18", "-331,18 €", "331,18 €"):
+    for saisie in ("300,50", "300.50", "-300,50 €", "300,50 €"):
         dlg.edit.setText(saisie)
         assert dlg.model.rowCount() == 1, f"échec pour {saisie!r}"
 
@@ -44,7 +44,7 @@ def test_recherche_operations_trouve_montants_et_dates(qapp, db):
     v.period = "all"
     v.reload_from_db()
 
-    v.search.setText("-331,18 €")
+    v.search.setText("-300,50 €")
     assert len(v.filtered) == 1
     v.search.setText("2,50")
     assert len(v.filtered) == 1

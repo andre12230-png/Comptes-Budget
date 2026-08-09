@@ -243,17 +243,17 @@ def test_encours_carte_reprend_les_deux_chiffres_de_la_banque(qapp, tmp_path):
                     montant=-100.0, pointee=1))
     d.insert_tx(_tx(id="cb-cours", date=today.isoformat(), date_valeur=prochain,
                     libelle="AMAZON", type="Carte bancaire",
-                    montant=-41.87, pointee=0))
+                    montant=-40.00, pointee=0))
     # Le prélèvement du relevé lui-même ne doit jamais être compté deux fois
     d.insert_tx(_tx(id="dd", date=today.isoformat(), date_valeur=prochain,
-                    libelle="DEBIT DIFFERE N 7209", type="Carte bancaire",
-                    categorie="Transaction exclue", montant=-141.87, pointee=1))
+                    libelle="DEBIT DIFFERE N 1234", type="Carte bancaire",
+                    categorie="Transaction exclue", montant=-140.00, pointee=1))
 
     v = BilanView(d)
     v.refresh()
     assert v.cb_courant.text() == fmt_euro(-100.0)      # confirmé par la banque
-    assert v.cb_precedent.text() == fmt_euro(-41.87)    # encore en cours
-    assert v.cb_total.text() == fmt_euro(-141.87)       # encours total
+    assert v.cb_precedent.text() == fmt_euro(-40.00)    # encore en cours
+    assert v.cb_total.text() == fmt_euro(-140.00)       # encours total
     assert v.cb_banner.isVisibleTo(v)
 
 
@@ -509,12 +509,13 @@ def test_changer_le_type_recale_la_date_de_valeur(qapp):
     """Corriger le type d'une opération DÉJÀ enregistrée doit recalculer sa
     date de valeur : sans cela, un prélèvement saisi par erreur en « Carte
     bancaire » gardait la date du 4 du mois suivant et sortait du solde
-    bancaire réel (cas L'olivier −49,40 € du 05/08/2026)."""
+    bancaire réel (cas d'une prime d'assurance auto prélevée en début de
+    mois)."""
     from comptesbudget.ui.dialogs import TxDialog
 
     tx = _tx(id="olivier", date="2026-08-05", date_valeur="2026-09-04",
              libelle="L'olivier Assurrance", type="Carte bancaire",
-             categorie="Banque et assurances", montant=-49.40, pointee=1)
+             categorie="Banque et assurances", montant=-35.00, pointee=1)
     dlg = TxDialog(tx=tx, categories=CATEGORIES_DEFAUT, all_transactions=[])
     # À l'ouverture, la date enregistrée est respectée telle quelle
     assert dlg.date_val.date().toString("yyyy-MM-dd") == "2026-09-04"
@@ -670,13 +671,13 @@ def test_bilan_ne_recompte_pas_une_echeance_deja_encaissee(qapp, tmp_path):
     # Versement déjà encaissé il y a peu, libellé « à la banque »
     deja = today.replace(day=1)
     d.insert_tx(_tx(id="pension", date=deja.isoformat(),
-                    date_valeur=deja.isoformat(), libelle="CARSAT SUD EST 447",
+                    date_valeur=deja.isoformat(), libelle="CAISSE RETRAITE 12",
                     type="Virement", categorie="Revenus",
-                    montant=1160.16, pointee=1))
+                    montant=900.00, pointee=1))
     # La récurrence le place quelques jours plus tard, sous son nom à lui
     plus_tard = deja + timedelta(days=8)
-    d.insert_recurring({"id": "rec-pension", "libelle": "Carsat Sud Est",
-                        "montant": 1160.16, "categorie": "Revenus",
+    d.insert_recurring({"id": "rec-pension", "libelle": "Caisse Retraite",
+                        "montant": 900.00, "categorie": "Revenus",
                         "sous_cat": "", "type": "Virement",
                         "frequency": "monthly", "day_of_month": plus_tard.day,
                         "start_date": plus_tard.isoformat(), "end_date": None,
@@ -684,8 +685,8 @@ def test_bilan_ne_recompte_pas_une_echeance_deja_encaissee(qapp, tmp_path):
 
     vue = BilanView(d)
     vue.refresh()
-    assert vue.kpis["solde"]._value.text() == fmt_euro(1160.16)
+    assert vue.kpis["solde"]._value.text() == fmt_euro(900.00)
     # Ni le bandeau des 15 jours ni celui du mois ne doivent l'annoncer encore
     assert vue.prev_entrees.text() == fmt_euro(0)
     assert vue.mois_entrees.text() == fmt_euro(0)
-    assert vue.mois_solde.text() == fmt_euro(1160.16)
+    assert vue.mois_solde.text() == fmt_euro(900.00)

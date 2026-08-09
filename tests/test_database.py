@@ -117,5 +117,5 @@ def test_migration_colonne_prevue_sur_base_ancienne(tmp_path):
     db.insert_tx({"id": "neuf", "date": "2026-08-10", "date_valeur": "2026-08-10",
                   "libelle": "CREATIS", "libelle_op": "CREATIS", "reference": "",
                   "type": "", "categorie": "Non classé", "sous_cat": "", "info": "",
-                  "montant": -831.01, "pointee": 0, "prevue": 1})
+                  "montant": -600.00, "pointee": 0, "prevue": 1})
     assert [t["prevue"] for t in db.list_tx() if t["id"] == "neuf"] == [1]

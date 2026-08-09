@@ -26,9 +26,9 @@ def test_matches_sens_debit_credit():
 
 
 def test_matches_amount_tolerance():
-    tx = {"libelle": "NETFLIX", "montant": -13.49}
-    assert matches_rule(tx, _rule(pattern="netflix", amount=13.49)) is True
-    assert matches_rule(tx, _rule(pattern="netflix", amount=15.99)) is False
+    tx = {"libelle": "NETFLIX", "montant": -13.00}
+    assert matches_rule(tx, _rule(pattern="netflix", amount=13.00)) is True
+    assert matches_rule(tx, _rule(pattern="netflix", amount=16.00)) is False
 
 
 def test_apply_simple():

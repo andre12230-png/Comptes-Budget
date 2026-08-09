@@ -76,7 +76,7 @@ def _meme_operation(cle_a: str, cle_b: str) -> bool:
 
     L'égalité stricte ne suffit pas : la banque ajoute souvent une forme
     juridique ou une agence à la fin (« VERISURE » ↔ « VERISURE SAS »,
-    « CARSAT SUD EST » ↔ « CARSAT SUD EST 447 »). On accepte donc que le plus
+    « CAISSE RETRAITE » ↔ « CAISSE RETRAITE 447 »). On accepte donc que le plus
     court soit le DÉBUT du plus long, mot à mot — mais jamais un simple mot
     commun au milieu, qui confondrait « ASS AUTO » et « ASS HABITATION »."""
     a, b = cle_a.split(), cle_b.split()

@@ -281,10 +281,10 @@ class TxDialog(QDialog):
         date de valeur découlait du choix précédent, elle est donc recalculée
         — y compris sur une opération déjà enregistrée.
 
-        Piège vécu le 05/08/2026 : un prélèvement saisi d'abord en « Carte
-        bancaire » avait reçu la date du 4 du mois suivant ; corriger le type
-        ensuite ne remettait pas la date de valeur au jour du prélèvement, et
-        l'opération (−49,40 €) restait hors du solde bancaire réel."""
+        Piège vécu : un prélèvement saisi d'abord en « Carte bancaire » avait
+        reçu la date du 4 du mois suivant ; corriger le type ensuite ne
+        remettait pas la date de valeur au jour du prélèvement, et l'opération
+        restait hors du solde bancaire réel."""
         self._dv_user_edited = False
         self._sync_date_valeur()
 

@@ -63,8 +63,8 @@ def _tx_identity(date_iso: str, montant, reference: str, libelle: str) -> str:
 
 def _identity_libelle(date_iso: str, montant, libelle: str) -> str:
     """Clé d'identité par libellé nettoyé — calculable pour TOUTE opération,
-    qu'elle vienne d'un relevé (libellé brut « CARCEPT ») ou d'une saisie
-    manuelle / harmonisation (« Carcept ») : clean_libelle unifie les deux."""
+    qu'elle vienne d'un relevé (libellé brut « CAISSE COMP ») ou d'une saisie
+    manuelle / harmonisation (« Caisse Comp ») : clean_libelle unifie les deux."""
     return f"{date_iso}|{float(montant or 0):.2f}|{clean_libelle(libelle)}"
 
 
@@ -92,7 +92,7 @@ def trouver_echeance_prevue(prevues: list[dict], d_iso: str, montant: float,
 
       1. **même montant** au centime près, à quelques jours près — le libellé
          de la banque est souvent méconnaissable (« CREATIS » arrive en
-         « PRLV SEPA CREATIS 4402387 ») ;
+         « PRLV SEPA CREATIS 1234567 ») ;
       2. **libellé compatible** et même sens, à quelques jours près — pour les
          échéances dont le montant varie d'un mois à l'autre (électricité,
          téléphone).
@@ -125,7 +125,7 @@ def trouver_echeance_prevue(prevues: list[dict], d_iso: str, montant: float,
 
 # Libellés des lignes RÉCAPITULATIVES du débit différé de la carte. Le jour du
 # prélèvement, la banque ajoute au relevé du compte une ligne qui totalise tous
-# les achats carte du mois (« DEBIT DIFFERE N° ...7209 » / « CUMUL DES DEBITS
+# les achats carte du mois (« DEBIT DIFFERE N° ...1234 » / « CUMUL DES DEBITS
 # DIFFERES ») — alors que ces mêmes achats y figurent déjà un par un. L'importer
 # ferait compter deux fois les mêmes dépenses : ces lignes sont écartées dès la
 # lecture du fichier (demande de l'utilisateur du 05/08/2026).

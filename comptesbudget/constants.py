@@ -216,7 +216,7 @@ SYNC_VERSION = 2
 #            catégories, et les textes longs se faisaient tronquer. Police de
 #            la légende réduite pour que toutes les catégories tiennent.
 # 1.19.0 : la ligne récapitulative du débit différé de la carte (« DEBIT
-#          DIFFERE N° ...7209 » / « CUMUL DES DEBITS DIFFERES ») n'est plus
+#          DIFFERE N° ...1234 » / « CUMUL DES DEBITS DIFFERES ») n'est plus
 #          importée. La banque la met dans le relevé du compte alors que les
 #          achats carte y figurent déjà un par un : elle faisait donc doublon.
 #          Elle arrivait jusque-là en catégorie « Transaction exclue », donc
@@ -231,7 +231,7 @@ SYNC_VERSION = 2
 #            recalcule sa date de valeur. Un prélèvement saisi par erreur en
 #            « Carte bancaire » gardait sinon la date du 4 du mois suivant :
 #            l'opération sortait du solde bancaire réel sans rien signaler
-#            (cas L'olivier −49,40 € du 05/08/2026, écart avec la banque).
+#            (cas d'une prime d'assurance, d'où un écart avec la banque).
 # 1.21.0 : saisir d'avance ce qui doit être débité (ou encaissé) dans le mois.
 #          • Onglet Prévisionnel, bouton « 📅 Générer les échéances du mois » :
 #            crée en une fois, pour le mois choisi, les opérations attendues
