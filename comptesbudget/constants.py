@@ -75,8 +75,8 @@ SYNC_VERSION = 2
 #          déjà enregistrées sont confirmées (jamais dépointées). L'import
 #          annonce le nombre d'opérations pointées automatiquement.
 # 1.13.1 : l'import reconnaît aussi les doublons des SAISIES MANUELLES dont
-#          le libellé diffère de celui de la banque (« Amazon » saisi à la
-#          main vs « COFIDIS » sur le relevé) : face à une saisie manuelle,
+#          le libellé diffère de celui de la banque (« Omnishop » saisi à la
+#          main vs « CREDIPLUS » sur le relevé) : face à une saisie manuelle,
 #          même date + même montant suffisent. Limité aux saisies manuelles
 #          pour ne jamais confondre deux opérations importées distinctes.
 # 1.13.2 : correctif d'affichage — la tuile « Solde pointé » du Bilan restait
@@ -241,7 +241,7 @@ SYNC_VERSION = 2
 #            L'assistant grise les échéances auxquelles une opération
 #            correspond déjà : on peut le relancer sans créer de doublon. Le
 #            rapprochement tolère les libellés rallongés par la banque
-#            (« VERISURE » / « VERISURE SAS »), accepte n'importe quel jour du
+#            (« SECURIDOM » / « SECURIDOM SAS »), accepte n'importe quel jour du
 #            MÊME mois (échéance du 17 payée le 30) mais pas le mois voisin
 #            au-delà de 5 jours — sinon le prélèvement du 31 juillet soldait
 #            l'échéance du 31 août. Quand deux échéances portent le même nom
@@ -260,7 +260,7 @@ SYNC_VERSION = 2
 #            montant ou sur un libellé concordant (factures à montant
 #            variable). Le libellé et la catégorie choisis sont conservés.
 #            Sans cela, une échéance passée un autre jour que prévu faisait
-#            deux lignes (incident du 06/08/2026, remboursement Amazon).
+#            deux lignes (incident du 06/08/2026, remboursement Omnishop).
 #          • Bilan, nouveau bandeau « 🗓 CE MOIS-CI » : reste à débiter, reste
 #            à encaisser et solde prévu au dernier jour du mois. Sa fenêtre
 #            part du 1er (une échéance du 5 toujours pas passée reste due),

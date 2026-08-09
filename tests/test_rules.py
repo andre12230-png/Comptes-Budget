@@ -10,38 +10,38 @@ def _rule(**kw):
 
 
 def test_matches_pattern():
-    tx = {"libelle": "AMAZON EU SARL", "montant": -20.0}
-    assert matches_rule(tx, _rule(pattern="amazon")) is True
-    assert matches_rule(tx, _rule(pattern="fnac")) is False
+    tx = {"libelle": "OMNISHOP EU SARL", "montant": -20.0}
+    assert matches_rule(tx, _rule(pattern="omnishop")) is True
+    assert matches_rule(tx, _rule(pattern="livrestore")) is False
     assert matches_rule(tx, _rule(pattern="")) is False   # motif vide → jamais
 
 
 def test_matches_sens_debit_credit():
-    dep = {"libelle": "AMAZON", "montant": -20.0}
-    rem = {"libelle": "AMAZON", "montant": 20.0}
-    assert matches_rule(dep, _rule(pattern="amazon", sens="debit")) is True
-    assert matches_rule(rem, _rule(pattern="amazon", sens="debit")) is False
-    assert matches_rule(rem, _rule(pattern="amazon", sens="credit")) is True
-    assert matches_rule(dep, _rule(pattern="amazon", sens="credit")) is False
+    dep = {"libelle": "OMNISHOP", "montant": -20.0}
+    rem = {"libelle": "OMNISHOP", "montant": 20.0}
+    assert matches_rule(dep, _rule(pattern="omnishop", sens="debit")) is True
+    assert matches_rule(rem, _rule(pattern="omnishop", sens="debit")) is False
+    assert matches_rule(rem, _rule(pattern="omnishop", sens="credit")) is True
+    assert matches_rule(dep, _rule(pattern="omnishop", sens="credit")) is False
 
 
 def test_matches_amount_tolerance():
-    tx = {"libelle": "NETFLIX", "montant": -13.00}
-    assert matches_rule(tx, _rule(pattern="netflix", amount=13.00)) is True
-    assert matches_rule(tx, _rule(pattern="netflix", amount=16.00)) is False
+    tx = {"libelle": "STREAMFLIX", "montant": -13.00}
+    assert matches_rule(tx, _rule(pattern="streamflix", amount=13.00)) is True
+    assert matches_rule(tx, _rule(pattern="streamflix", amount=16.00)) is False
 
 
 def test_apply_simple():
-    rules = [_rule(pattern="amazon", categorie="Shopping")]
-    tx = {"libelle": "AMAZON", "montant": -10.0, "categorie": "Non classé"}
+    rules = [_rule(pattern="omnishop", categorie="Shopping")]
+    tx = {"libelle": "OMNISHOP", "montant": -10.0, "categorie": "Non classé"}
     modified, fields = apply_rules_to_tx(tx, rules)
     assert modified is True
     assert fields["categorie"] == "Shopping"
 
 
 def test_apply_no_overwrite():
-    rules = [_rule(pattern="amazon", categorie="Shopping", no_overwrite=1)]
-    tx = {"libelle": "AMAZON", "montant": -10.0, "categorie": "Alimentation"}
+    rules = [_rule(pattern="omnishop", categorie="Shopping", no_overwrite=1)]
+    tx = {"libelle": "OMNISHOP", "montant": -10.0, "categorie": "Alimentation"}
     modified, _ = apply_rules_to_tx(tx, rules)
     assert modified is False   # catégorie déjà posée → on ne touche pas
 
@@ -49,10 +49,10 @@ def test_apply_no_overwrite():
 def test_apply_priorite_montant():
     # Deux règles matchent ; celle qui porte un montant l'emporte.
     rules = [
-        _rule(pattern="sncf", categorie="Transports"),
-        _rule(pattern="sncf", categorie="Loisirs", amount=50.0),
+        _rule(pattern="railexpress", categorie="Transports"),
+        _rule(pattern="railexpress", categorie="Loisirs", amount=50.0),
     ]
-    tx = {"libelle": "SNCF", "montant": -50.0, "categorie": "Non classé"}
+    tx = {"libelle": "RAILEXPRESS", "montant": -50.0, "categorie": "Non classé"}
     _, fields = apply_rules_to_tx(tx, rules)
     assert fields["categorie"] == "Loisirs"
 

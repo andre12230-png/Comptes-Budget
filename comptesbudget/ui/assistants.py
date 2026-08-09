@@ -544,7 +544,7 @@ class GenererEcheancesDialog(QDialog):
 class HarmonizeLabelsDialog(QDialog):
     """Aperçu à cocher des libellés à harmoniser. La colonne « Harmonisé »
     est modifiable : double-cliquez pour ajuster une cible (ex. fusionner
-    « E Leclerc » et « Centre Leclerc » sous « Leclerc »)."""
+    « E Marche » et « Centre Marche » sous « Marche »)."""
 
     def __init__(self, parent, rows: list[dict]):
         super().__init__(parent)

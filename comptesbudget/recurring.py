@@ -75,7 +75,7 @@ def _meme_operation(cle_a: str, cle_b: str) -> bool:
     """Deux libellés normalisés désignent-ils la même opération ?
 
     L'égalité stricte ne suffit pas : la banque ajoute souvent une forme
-    juridique ou une agence à la fin (« VERISURE » ↔ « VERISURE SAS »,
+    juridique ou une agence à la fin (« SECURIDOM » ↔ « SECURIDOM SAS »,
     « CAISSE RETRAITE » ↔ « CAISSE RETRAITE 447 »). On accepte donc que le plus
     court soit le DÉBUT du plus long, mot à mot — mais jamais un simple mot
     commun au milieu, qui confondrait « ASS AUTO » et « ASS HABITATION »."""
@@ -176,7 +176,7 @@ def echeances_du_mois(recs: list[dict], txs: list[dict], annee: int, mois: int,
     # Toutes les occurrences attendues, AVANT rapprochement : il faut les
     # connaître toutes pour attribuer chaque opération à la bonne (cf. les
     # trois passes ci-dessous). Les récurrences sont prises de la plus précise
-    # à la plus vague — « ORANGE MOBILE » doit se servir avant « ORANGE ».
+    # à la plus vague — « ALPHATEL MOBILE » doit se servir avant « ALPHATEL ».
     occurrences: list[dict] = []
     for r in sorted(recs, key=lambda r: -len(
             _recurring_norm_label(r.get("libelle", "")).split())):

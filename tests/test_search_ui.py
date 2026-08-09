@@ -23,7 +23,7 @@ def _tx(**kw):
 @pytest.fixture
 def db(tmp_path):
     d = Database(str(tmp_path / "s.db"))
-    d.insert_tx(_tx(id="a", libelle="ETOILE DU RHONE", libelle_op="ETOILE DU RHONE",
+    d.insert_tx(_tx(id="a", libelle="GARAGE DU CENTRE", libelle_op="GARAGE DU CENTRE",
                     montant=-300.50))
     d.insert_tx(_tx(id="b", libelle="CAFE", libelle_op="CAFE", montant=-2.5))
     return d
@@ -50,7 +50,7 @@ def test_recherche_operations_trouve_montants_et_dates(qapp, db):
     assert len(v.filtered) == 1
     v.search.setText("01/06/2026")          # date au format français
     assert len(v.filtered) == 2
-    v.search.setText("etoile rhone")        # plusieurs mots : tous requis
+    v.search.setText("garage centre")       # plusieurs mots : tous requis
     assert len(v.filtered) == 1
     v.search.setText("")                    # champ vide : tout s'affiche
     assert len(v.filtered) == 2

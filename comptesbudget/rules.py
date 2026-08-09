@@ -15,7 +15,7 @@ def matches_rule(tx: dict, rule: dict) -> bool:
     if not pattern or pattern not in lib:
         return False
     # Sens : '' = les deux ; 'debit' = montants négatifs ; 'credit' = positifs.
-    # Évite p. ex. qu'un REMBOURSEMENT Amazon (+) retombe dans « Shopping ».
+    # Évite p. ex. qu'un REMBOURSEMENT Omnishop (+) retombe dans « Shopping ».
     sens = rule.get("sens") or ""
     m = tx.get("montant", 0)
     if sens == "debit" and m >= 0:

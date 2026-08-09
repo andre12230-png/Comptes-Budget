@@ -2,7 +2,7 @@
 
 from calendar import monthrange
 from datetime import date
-from html import escape as _esc   # « H&M » → « H&amp;M » : sinon le & casse le HTML
+from html import escape as _esc   # « B&C » → « B&amp;C » : sinon le & casse le HTML
 
 from PySide6.QtWidgets import (
     QVBoxLayout, QHBoxLayout,

@@ -17,11 +17,11 @@ def _tx(**kw):
 
 def test_rapport_echappe_les_caracteres_html(tmp_path):
     # Régression : un libellé ou une catégorie contenant « & » ou « < »
-    # (ex. « H&M ») était inséré tel quel dans le HTML du rapport.
+    # (ex. « B&C ») était inséré tel quel dans le HTML du rapport.
     db = Database(str(tmp_path / "t.db"))
-    db.insert_tx(_tx(id="t1", libelle="H&M <Paris>", categorie="Vet & Mode"))
+    db.insert_tx(_tx(id="t1", libelle="B&C <Paris>", categorie="Vet & Mode"))
     html = build_monthly_report_html(db, "2026-05")
-    assert "H&amp;M &lt;Paris&gt;" in html
+    assert "B&amp;C &lt;Paris&gt;" in html
     assert "<Paris>" not in html
     assert "Vet &amp; Mode" in html
 

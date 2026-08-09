@@ -46,8 +46,8 @@ def clean_libelle(raw: str) -> str:
     """Forme canonique d'un libellé : retire dates, numéros de magasin /
     références et suffixes web (.fr/.com), puis normalise la casse.
 
-    Déterministe : deux variantes du même commerçant (« LIDL 3193 » et
-    « lidl 3852 ») produisent le même résultat (« Lidl ») et fusionnent."""
+    Déterministe : deux variantes du même commerçant (« SUPERETTE 3193 » et
+    « superette 3852 ») produisent le même résultat (« Superette ») et fusionnent."""
     s = raw or ""
     s = re.sub(r"\.(fr|com|net|org|eu)\b", " ", s, flags=re.IGNORECASE)  # web
     s = re.sub(r"\S*\d\S*", " ", s)            # tout token contenant un chiffre

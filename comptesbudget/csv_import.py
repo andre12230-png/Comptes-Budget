@@ -91,8 +91,8 @@ def trouver_echeance_prevue(prevues: list[dict], d_iso: str, montant: float,
     Deux façons de se reconnaître, la première étant prioritaire :
 
       1. **même montant** au centime près, à quelques jours près — le libellé
-         de la banque est souvent méconnaissable (« CREATIS » arrive en
-         « PRLV SEPA CREATIS 1234567 ») ;
+         de la banque est souvent méconnaissable (« PRETIS » arrive en
+         « PRLV SEPA PRETIS 1234567 ») ;
       2. **libellé compatible** et même sens, à quelques jours près — pour les
          échéances dont le montant varie d'un mois à l'autre (électricité,
          téléphone).
@@ -263,8 +263,8 @@ def import_csv(path: str, db: Database) -> ResultatImport:
         for t in existing_tx)
     # Troisième filet, réservé aux SAISIES MANUELLES (id sans « | », donc
     # UUID) : même date + même montant suffisent, quel que soit le libellé.
-    # L'utilisateur nomme ses saisies à sa façon (« Amazon ») alors que la
-    # banque écrit autre chose (« COFIDIS ») — indétectable par libellé
+    # L'utilisateur nomme ses saisies à sa façon (« Omnishop ») alors que la
+    # banque écrit autre chose (« CREDIPLUS ») — indétectable par libellé
     # (incident du 14/07/2026). Volontairement limité aux saisies manuelles :
     # entre deux opérations importées, deux achats distincts du même jour au
     # même montant restent bien deux opérations.

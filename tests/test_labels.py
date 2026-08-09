@@ -4,11 +4,11 @@ from comptesbudget.labels import build_libelle_profiles, clean_libelle
 
 def test_clean_fusionne_variantes_numerotees():
     # Deux magasins du même enseigne doivent converger vers la même forme.
-    assert clean_libelle("LIDL 3193") == clean_libelle("lidl 3852") == "Lidl"
+    assert clean_libelle("SUPERETTE 3193") == clean_libelle("superette 3852") == "Superette"
 
 
 def test_clean_retire_suffixe_web():
-    assert clean_libelle("AMAZON.FR") == "Amazon"
+    assert clean_libelle("OMNISHOP.FR") == "Omnishop"
 
 
 def test_clean_conserve_sigles():
@@ -22,15 +22,15 @@ def test_clean_ne_vide_jamais():
 
 def test_build_profiles_categorie_et_montant():
     txs = [
-        {"libelle": "Lidl", "categorie": "Alimentation", "sous_cat": "Courses",
+        {"libelle": "Superette", "categorie": "Alimentation", "sous_cat": "Courses",
          "type": "Carte bancaire", "montant": -30.0},
-        {"libelle": "Lidl", "categorie": "Alimentation", "sous_cat": "Courses",
+        {"libelle": "Superette", "categorie": "Alimentation", "sous_cat": "Courses",
          "type": "Carte bancaire", "montant": -40.0},
-        {"libelle": "Lidl", "categorie": "Loisirs", "sous_cat": "",
+        {"libelle": "Superette", "categorie": "Loisirs", "sous_cat": "",
          "type": "Carte bancaire", "montant": -50.0},
     ]
     profiles = build_libelle_profiles(txs)
-    p = profiles["Lidl"]
+    p = profiles["Superette"]
     assert p["categorie"] == "Alimentation"   # catégorie majoritaire
     assert p["sous_cat"] == "Courses"
     assert p["montant"] == -40.0              # montant médian
@@ -42,5 +42,5 @@ def test_clean_libelle_conserve_les_libelles_sans_commercant():
     assert clean_libelle("VIR 123456") == "Vir 123456"
     assert clean_libelle("VIR 123456") != clean_libelle("VIR 789012")
     # Les enseignes continuent de fusionner normalement
-    assert clean_libelle("LIDL 3193") == clean_libelle("lidl 3852") == "Lidl"
+    assert clean_libelle("SUPERETTE 3193") == clean_libelle("superette 3852") == "Superette"
     assert clean_libelle("PRLV SEPA 20260715 EDF") == "Prlv Sepa EDF"

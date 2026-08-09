@@ -42,17 +42,17 @@ def db(tmp_path):
     d.insert_tx(_tx(id="t-sal", date=first, date_valeur=first, libelle="SALAIRE",
                     libelle_op="SALAIRE", type="Virement", categorie="Revenus",
                     montant=2000.0, pointee=1))
-    d.insert_tx(_tx(id="t-cou", date=todays, date_valeur=todays, libelle="CARREFOUR",
-                    libelle_op="CARREFOUR", type="Carte bancaire",
+    d.insert_tx(_tx(id="t-cou", date=todays, date_valeur=todays, libelle="HYPERMARCHE",
+                    libelle_op="HYPERMARCHE", type="Carte bancaire",
                     categorie="Alimentation", montant=-45.30, pointee=1))
     d.insert_tx(_tx(id="t-big", date=todays, date_valeur=todays, libelle="COURSES",
                     libelle_op="COURSES", type="Carte bancaire",
                     categorie="Alimentation", montant=-380.0, pointee=1))  # budget dépassé
-    d.insert_tx(_tx(id="t-cb", date=todays, date_valeur=future, libelle="AMAZON",
-                    libelle_op="AMAZON", type="Carte bancaire",
+    d.insert_tx(_tx(id="t-cb", date=todays, date_valeur=future, libelle="OMNISHOP",
+                    libelle_op="OMNISHOP", type="Carte bancaire",
                     categorie="Loisirs", montant=-60.0, pointee=0))        # encours CB
     d.set_budget("Alimentation", 400.0)
-    d.insert_rule({"id": "r1", "pattern": "amazon", "amount": None,
+    d.insert_rule({"id": "r1", "pattern": "omnishop", "amount": None,
                    "categorie": "Shopping", "sous_cat": "", "no_overwrite": 0,
                    "created_at": "2026-01-01"})
     d.insert_recurring({"id": "rec1", "libelle": "Loyer", "montant": -800.0,
@@ -120,7 +120,7 @@ def test_bilan_solde_ignore_encours_carte(qapp, db):
     today = date.today()
     future = (today + timedelta(days=20)).isoformat()
     db.insert_tx(_tx(id="t-cb-pointe", date=today.isoformat(), date_valeur=future,
-                     libelle="FNAC", libelle_op="FNAC", type="Carte bancaire",
+                     libelle="LIVRESTORE", libelle_op="LIVRESTORE", type="Carte bancaire",
                      categorie="Loisirs", montant=-100.0, pointee=1))
 
     view = BilanView(db)
@@ -239,10 +239,10 @@ def test_encours_carte_reprend_les_deux_chiffres_de_la_banque(qapp, tmp_path):
 
     # Deux achats au prochain prélèvement : un intégré par la banque, un en cours
     d.insert_tx(_tx(id="cb-ok", date=today.isoformat(), date_valeur=prochain,
-                    libelle="CARREFOUR", type="Carte bancaire",
+                    libelle="HYPERMARCHE", type="Carte bancaire",
                     montant=-100.0, pointee=1))
     d.insert_tx(_tx(id="cb-cours", date=today.isoformat(), date_valeur=prochain,
-                    libelle="AMAZON", type="Carte bancaire",
+                    libelle="OMNISHOP", type="Carte bancaire",
                     montant=-40.00, pointee=0))
     # Le prélèvement du relevé lui-même ne doit jamais être compté deux fois
     d.insert_tx(_tx(id="dd", date=today.isoformat(), date_valeur=prochain,
@@ -277,7 +277,7 @@ def test_encours_carte_avec_remboursement_en_cours(qapp, tmp_path):
     # Un remboursement : date de valeur immédiate, pas encore passé
     d.insert_tx(_tx(id="cb-remb", date=today.isoformat(),
                     date_valeur=today.isoformat(),
-                    libelle="AMAZON", type="Carte bancaire",
+                    libelle="OMNISHOP", type="Carte bancaire",
                     montant=15.00, pointee=0))
 
     v = BilanView(d)
@@ -372,7 +372,7 @@ def test_prevu_debit_carte_ignore_les_operations_en_cours(qapp, tmp_path):
                     libelle="ACHATS", type="Carte bancaire",
                     montant=-120.00, pointee=1))
     d.insert_tx(_tx(id="cb-remb", date=today.isoformat(), date_valeur=dans_4j,
-                    libelle="AMAZON", type="Carte bancaire",
+                    libelle="OMNISHOP", type="Carte bancaire",
                     montant=15.00, pointee=0))
 
     v = BilanView(d)
@@ -513,8 +513,8 @@ def test_changer_le_type_recale_la_date_de_valeur(qapp):
     mois)."""
     from comptesbudget.ui.dialogs import TxDialog
 
-    tx = _tx(id="olivier", date="2026-08-05", date_valeur="2026-09-04",
-             libelle="L'olivier Assurrance", type="Carte bancaire",
+    tx = _tx(id="assurance", date="2026-08-05", date_valeur="2026-09-04",
+             libelle="L'amandier Assurrance", type="Carte bancaire",
              categorie="Banque et assurances", montant=-35.00, pointee=1)
     dlg = TxDialog(tx=tx, categories=CATEGORIES_DEFAUT, all_transactions=[])
     # À l'ouverture, la date enregistrée est respectée telle quelle
@@ -539,7 +539,7 @@ def test_date_de_valeur_saisie_a_la_main_est_respectee(qapp):
     dlg.type_combo.setCurrentText("Carte bancaire")
     dlg.date_edit.setDate(QDate(2026, 7, 31))
     dlg.date_val.setDate(QDate(2026, 9, 4))      # correction volontaire
-    dlg.libelle.setText("Centre Leclerc")
+    dlg.libelle.setText("Centre Marche")
     assert dlg.date_val.date().toString("yyyy-MM-dd") == "2026-09-04"
 
 
@@ -619,7 +619,7 @@ def test_bilan_bandeau_fin_de_mois(qapp, tmp_path):
                     montant=-100.0, pointee=1))
     # Échéance du début de mois toujours pas passée : elle reste due
     d.insert_tx(_tx(id="attendue-1", date=premier, date_valeur=premier,
-                    libelle="EDF", type="Prelevement", montant=-50.0,
+                    libelle="ELECTRICITE", type="Prelevement", montant=-50.0,
                     pointee=0, prevue=1))
     # Échéance de fin de mois
     d.insert_tx(_tx(id="attendue-2", date=dernier, date_valeur=dernier,

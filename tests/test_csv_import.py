@@ -20,7 +20,7 @@ def test_parse_french_date():
 
 
 _CSV = """Date;Libelle;Montant
-23/06/2026;CARREFOUR MARKET;-45,30
+23/06/2026;HYPERMARCHE MARKET;-45,30
 22/06/2026;SALAIRE JUIN;2000,00
 """
 
@@ -104,24 +104,24 @@ def test_import_csv_dedup_saisie_manuelle_sans_reference(tmp_path):
 
 
 def test_import_csv_dedup_saisie_manuelle_libelle_different(tmp_path):
-    # Incident du 14/07/2026 : saisie manuelle « Amazon », relevé « COFIDIS »
+    # Incident du 14/07/2026 : saisie manuelle « Omnishop », relevé « CREDIPLUS »
     # (même opération, libellés incomparables). Face à une saisie manuelle,
     # même date + même montant suffisent — et le « x » de la banque pointe
     # la saisie manuelle.
     db = Database(str(tmp_path / "t.db"))
     db.insert_tx({
         "id": "uuid-manuel", "date": "2026-07-03", "date_valeur": "2026-07-03",
-        "libelle": "Amazon", "libelle_op": "Amazon", "reference": "",
+        "libelle": "Omnishop", "libelle_op": "Omnishop", "reference": "",
         "type": "Carte bancaire", "categorie": "Shopping", "sous_cat": "",
         "info": "", "montant": -20.00, "pointee": 0,
     })
     p = _write(tmp_path, "r.csv",
                "Date;Libelle;Montant;Pointage operation\n"
-               "03/07/2026;COFIDIS;-20,00;x\n")
+               "03/07/2026;CREDIPLUS;-20,00;x\n")
     assert import_csv(p, db) == (0, 1, 0, 1, 0, 0)
     rows = [dict(r) for r in db.list_tx()]
     assert len(rows) == 1
-    assert rows[0]["libelle"] == "Amazon"    # la saisie de l'utilisateur reste
+    assert rows[0]["libelle"] == "Omnishop"    # la saisie de l'utilisateur reste
     assert rows[0]["pointee"] == 1           # ...et la banque l'a confirmée
 
 
@@ -166,10 +166,10 @@ def test_import_csv_dedup_reference_changee_entre_exports(tmp_path):
     db = Database(str(tmp_path / "t.db"))
     a = _write(tmp_path, "a.csv",
                "Date;Libelle;Reference;Montant\n"
-               "08/06/2026;ORANGE;REF-EXPORT-1;-43,00\n")
+               "08/06/2026;ALPHATEL;REF-EXPORT-1;-43,00\n")
     b = _write(tmp_path, "b.csv",
                "Date;Libelle;Reference;Montant\n"
-               "08/06/2026;ORANGE;REF-EXPORT-2;-43,00\n")
+               "08/06/2026;ALPHATEL;REF-EXPORT-2;-43,00\n")
     assert import_csv(a, db) == (1, 0, 0, 0, 0, 0)
     assert import_csv(b, db) == (0, 1, 0, 0, 0, 0)
     assert len(list(db.list_tx())) == 1
@@ -215,11 +215,11 @@ def test_import_csv_pointage_automatique(tmp_path):
     db = Database(str(tmp_path / "t.db"))
     p = _write(tmp_path, "p.csv",
                "Date;Libelle;Montant;Pointage operation\n"
-               "01/06/2026;ORANGE;-43,00;x\n"
+               "01/06/2026;ALPHATEL;-43,00;x\n"
                "09/06/2026;PISCINE;-24,80;0\n")
     assert import_csv(p, db) == (2, 0, 0, 0, 0, 0)
     par_lib = {dict(r)["libelle"]: dict(r)["pointee"] for r in db.list_tx()}
-    assert par_lib == {"ORANGE": 1, "PISCINE": 0}
+    assert par_lib == {"ALPHATEL": 1, "PISCINE": 0}
 
 
 def test_import_csv_pointage_confirme_les_existantes(tmp_path):
@@ -228,25 +228,25 @@ def test_import_csv_pointage_confirme_les_existantes(tmp_path):
     db = Database(str(tmp_path / "t.db"))
     db.insert_tx({
         "id": "uuid-1", "date": "2026-06-01", "date_valeur": "2026-06-01",
-        "libelle": "Orange", "libelle_op": "Orange", "reference": "",
+        "libelle": "Alphatel", "libelle_op": "Alphatel", "reference": "",
         "type": "", "categorie": "Logement - maison", "sous_cat": "", "info": "",
         "montant": -43.00, "pointee": 0,
     })
     db.insert_tx({
         "id": "uuid-2", "date": "2026-06-02", "date_valeur": "2026-06-02",
-        "libelle": "SAUR", "libelle_op": "SAUR", "reference": "",
+        "libelle": "SERVICE DES EAUX", "libelle_op": "SERVICE DES EAUX", "reference": "",
         "type": "", "categorie": "Logement - maison", "sous_cat": "", "info": "",
         "montant": -22.50, "pointee": 1,
     })
     p = _write(tmp_path, "p.csv",
                "Date;Libelle;Montant;Pointage operation\n"
-               "01/06/2026;ORANGE;-43,00;x\n"
-               "02/06/2026;SAUR;-22,50;0\n")
-    # 0 importée, 2 doublons, 1 pointée automatiquement (Orange)
+               "01/06/2026;ALPHATEL;-43,00;x\n"
+               "02/06/2026;SERVICE DES EAUX;-22,50;0\n")
+    # 0 importée, 2 doublons, 1 pointée automatiquement (Alphatel)
     assert import_csv(p, db) == (0, 2, 0, 1, 0, 0)
     etats = {dict(r)["libelle"]: dict(r)["pointee"] for r in db.list_tx()}
-    assert etats["Orange"] == 1     # confirmée par le relevé
-    assert etats["SAUR"] == 1       # « 0 » banque ne dépointe JAMAIS
+    assert etats["Alphatel"] == 1     # confirmée par le relevé
+    assert etats["SERVICE DES EAUX"] == 1       # « 0 » banque ne dépointe JAMAIS
 
 
 def test_import_csv_montant_illisible_signale(tmp_path):
@@ -266,13 +266,13 @@ def test_import_csv_ecarte_le_recapitulatif_de_debit_differe(tmp_path):
     db = Database(str(tmp_path / "t.db"))
     p = _write(tmp_path, "releve.csv",
                "Date;Libelle;Type operation;Categorie;Montant;Pointage operation\n"
-               "05/08/2026;PRIXTEL;Prelevement;Logement;-78,50;x\n"
+               "05/08/2026;DELTAMOBILE;Prelevement;Logement;-78,50;x\n"
                "04/08/2026;DEBIT DIFFERE N° ...1234;Carte bancaire;"
                "Transaction exclue;-1016,31;x\n")
     # 1 importée, 0 doublon, 0 illisible, 0 pointée, 1 récapitulatif écarté
     assert import_csv(p, db) == (1, 0, 0, 0, 1, 0)
     libelles = [dict(r)["libelle"] for r in db.list_tx()]
-    assert libelles == ["PRIXTEL"]
+    assert libelles == ["DELTAMOBILE"]
 
 
 def test_import_csv_recapitulatif_reconnu_quelle_que_soit_l_ecriture(tmp_path):
@@ -292,7 +292,7 @@ def test_import_csv_recapitulatif_reconnu_quelle_que_soit_l_ecriture(tmp_path):
 def _echeance(db, **kw):
     """Insère une échéance prévue (comme « Générer les échéances du mois »)."""
     tx = {"id": "prev-1", "date": "2026-08-10", "date_valeur": "2026-08-10",
-          "libelle": "CREATIS", "libelle_op": "CREATIS", "reference": "",
+          "libelle": "PRETIS", "libelle_op": "PRETIS", "reference": "",
           "type": "Prelevement", "categorie": "Crédits & emprunts",
           "sous_cat": "", "info": "", "montant": -600.00,
           "pointee": 0, "prevue": 1}
@@ -313,7 +313,7 @@ def test_echeance_prevue_rattachee_malgre_le_decalage_de_date(tmp_path):
     l'a passée le 12 sous un libellé à elle."""
     db = Database(str(tmp_path / "t.db"))
     _echeance(db)
-    p = _releve(tmp_path, "12/08/2026;PRLV SEPA CREATIS 1234567;-600,00;x\n")
+    p = _releve(tmp_path, "12/08/2026;PRLV SEPA PRETIS 1234567;-600,00;x\n")
 
     res = import_csv(p, db)
     assert (res.importees, res.rapprochees) == (0, 1)
@@ -323,17 +323,17 @@ def test_echeance_prevue_rattachee_malgre_le_decalage_de_date(tmp_path):
     t = txs[0]
     assert t["date"] == "2026-08-12"        # date réelle de la banque
     assert t["pointee"] == 1 and t["prevue"] == 0
-    assert t["libelle"] == "CREATIS"        # libellé lisible conservé
-    assert t["libelle_op"] == "PRLV SEPA CREATIS 1234567"
+    assert t["libelle"] == "PRETIS"        # libellé lisible conservé
+    assert t["libelle_op"] == "PRLV SEPA PRETIS 1234567"
     assert t["categorie"] == "Crédits & emprunts"   # catégorie du prévisionnel
 
 
 def test_echeance_prevue_montant_variable(tmp_path):
     """Facture d'électricité : le montant diffère, mais le libellé concorde."""
     db = Database(str(tmp_path / "t.db"))
-    _echeance(db, libelle="OCTOPUS ENERGY", montant=-110.00,
+    _echeance(db, libelle="ENERGIA VERTE", montant=-110.00,
               categorie="Logement", date="2026-08-15", date_valeur="2026-08-15")
-    p = _releve(tmp_path, "17/08/2026;OCTOPUS ENERGY SAS;-124,00;x\n")
+    p = _releve(tmp_path, "17/08/2026;ENERGIA VERTE SAS;-124,00;x\n")
 
     res = import_csv(p, db)
     assert (res.importees, res.rapprochees) == (0, 1)
@@ -347,7 +347,7 @@ def test_echeance_prevue_date_exacte_reste_un_doublon_pointe(tmp_path):
     et cesse d'être une prévision."""
     db = Database(str(tmp_path / "t.db"))
     _echeance(db)
-    p = _releve(tmp_path, "10/08/2026;CREATIS;-600,00;x\n")
+    p = _releve(tmp_path, "10/08/2026;PRETIS;-600,00;x\n")
 
     res = import_csv(p, db)
     assert (res.importees, res.doublons, res.pointees) == (0, 1, 1)
@@ -360,7 +360,7 @@ def test_echeance_prevue_trop_loin_dans_le_temps(tmp_path):
     normalement (un doublon visible vaut mieux qu'une confusion)."""
     db = Database(str(tmp_path / "t.db"))
     _echeance(db)
-    p = _releve(tmp_path, "25/08/2026;PRLV SEPA CREATIS;-600,00;x\n")
+    p = _releve(tmp_path, "25/08/2026;PRLV SEPA PRETIS;-600,00;x\n")
 
     res = import_csv(p, db)
     assert (res.importees, res.rapprochees) == (1, 0)
@@ -372,7 +372,7 @@ def test_echeance_prevue_ne_capte_pas_une_depense_sans_rapport(tmp_path):
     l'échéance rester en attente."""
     db = Database(str(tmp_path / "t.db"))
     _echeance(db)
-    p = _releve(tmp_path, "11/08/2026;E-LECLERC;-67,00;x\n")
+    p = _releve(tmp_path, "11/08/2026;E-MARCHE;-67,00;x\n")
 
     res = import_csv(p, db)
     assert (res.importees, res.rapprochees) == (1, 0)
@@ -386,10 +386,10 @@ def test_echeance_prevue_une_seule_ligne_par_echeance(tmp_path):
     db = Database(str(tmp_path / "t.db"))
     _echeance(db)
     _echeance(db, id="prev-2", date="2026-08-11", date_valeur="2026-08-11",
-              libelle="CREATIS BIS")
+              libelle="PRETIS BIS")
     p = _releve(tmp_path,
-                "12/08/2026;PRLV CREATIS;-600,00;x\n"
-                "13/08/2026;PRLV CREATIS;-600,00;x\n")
+                "12/08/2026;PRLV PRETIS;-600,00;x\n"
+                "13/08/2026;PRLV PRETIS;-600,00;x\n")
 
     res = import_csv(p, db)
     assert (res.importees, res.rapprochees) == (0, 2)
@@ -402,7 +402,7 @@ def test_echeance_prevue_non_pointee_si_le_releve_ne_confirme_pas(tmp_path):
     complétée mais reste non pointée."""
     db = Database(str(tmp_path / "t.db"))
     _echeance(db)
-    p = _releve(tmp_path, "12/08/2026;PRLV SEPA CREATIS;-600,00;\n")
+    p = _releve(tmp_path, "12/08/2026;PRLV SEPA PRETIS;-600,00;\n")
 
     res = import_csv(p, db)
     assert res.rapprochees == 1
